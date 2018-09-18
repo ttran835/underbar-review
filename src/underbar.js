@@ -85,6 +85,15 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var filter = [];
+    //use _.each to iterator over coll, passing in followings function:
+    _.each(collection, function (element) {
+      //if invoking test w/ current element === true;
+      if(test(element)) {
+        filter.push(element);
+      }
+    });
+    return filter;     
   };
 
   // Return all elements of an array that don't pass a truth test.
