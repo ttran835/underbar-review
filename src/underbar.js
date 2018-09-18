@@ -97,15 +97,41 @@
   };
 
   // Return all elements of an array that don't pass a truth test.
+    //[1, 2, 3, 4]; 
+      //filter even => [2, 4]; 
+    //reject even => [1, 3];  
   _.reject = function(collection, test) {
-    // TIP: see if you can re-use _.filter() here, without simply
-    // copying code in and modifying it
+    return _.filter(collection, function(element) {
+      if (!test(element)) {
+        return element;
+      }
+    });
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var uniqueValues = [];//[1, 2];
+    //if isSorted => iterate through array
+    if(isSorted) {  
+      var booleanReturn = [];
+      for(var i = 0; i < array.length; i++) {
+        //var return = invoke iterator with current element 
+        var returns = iterator(array[i]);
+        //if booleanReturn does not cotain the variable return; 
+        if(!booleanReturn.includes(returns)) {
+          booleanReturn.push(returns);  
+          uniqueValues.push(array[i]); 
+        }
+      }
+    } else {
+      for(var i = 0; i < array.length; i++) {
+        if(!uniqueValues.includes(array[i])) {
+          uniqueValues.push(array[i]);
+        }
+      }
+    }
+    return uniqueValues;
   };
-
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
