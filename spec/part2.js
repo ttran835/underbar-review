@@ -56,9 +56,8 @@
       });
 
       it('should return false given an array and a value not in that array', function() {
-        // Replace this line with an `expect` statement that tests
-        // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        var array = [1, 2, 3];
+        expect(_.contains(array, 4)).to.be.false;
       });
 
       it('should return true given a object and a value from that object', function() {
@@ -145,9 +144,7 @@
       });
 
       it('should fail for a set containing no matching values', function() {
-        // Replace this line with an `expect` statement that tests
-        // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        expect(_.some([3, 3], (elt) => elt === 2)).to.be.false;
       });
 
       it('should pass for a collection containing one matching value', function() {
@@ -185,9 +182,10 @@
       });
 
       it('should override properties found on the destination', function() {
-        // Replace this line with an `expect` statement that tests
-        // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        var obj = {a: 1};
+        var obj2 = {a: 2};
+        _.extend(obj, obj2)
+        expect(obj).to.eql(obj2);
       });
 
       it('should not override properties not found in the source', function() {
@@ -263,9 +261,9 @@
       });
 
       it('should copy any property whose key is not already set on the target', function() {
-        // Replace this line with an `expect` statement that tests
-        // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        var obj = {a: 1, b: 2};
+        var obj2 = {a: 1, b: 2, c: 3};
+        expect(_.defaults(obj, obj2)).to.eql(obj2);
       });
 
       it('should not copy a property if that key is already set on the target', function() {
@@ -390,7 +388,7 @@
 
       it('should produce the same result as the non-memoized version', function() {
         expect(add(1, 2)).to.equal(3);
-        expect(memoAdd(1, 2)).to.equal(3);
+        expect(memoAdd(1, 2)).to.equal(3); // [1, 2]
       });
 
       it('should give different results for different arguments', function() {

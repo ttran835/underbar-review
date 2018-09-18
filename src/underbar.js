@@ -178,16 +178,31 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    //special case: if no accumulator
-    if (accumulator === undefined) {
-      accumulator = collection[0];
-      collection = collection.slice(1);
+
+    if (Array.isArray(collection)) {
+
+      if (accumulator === undefined) {
+        accumulator = collection[0];
+        collection = collection.slice(1);
+      }
+
+      for (var i = 0; i < collection.length; i++) {
+        accumulator = iterator(accumulator, collection[i]);
+      } 
+
+      return accumulator;
+    } else {
+
+      // TODO currently when collection is an an object, and reduce
+      // is not passed an accumulator, this implementation does not work
+
+      for (var key in collection) {  
+        accumulator = iterator(accumulator, collection[key]);
+      } 
+
+      return accumulator;
+       
     }
-    for (var i = 0; i < collection.length; i++) {
-      accumulator = iterator(accumulator, collection[i]);
-    } 
-      // accumulator = invokation of iterator on accumulator & collection[i]; 
-    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -215,13 +230,25 @@
       }
 
       return !!iterator(elt); 
-    }, true)
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
+  // every([1, 1, 1], (elt) => (return elt === 2)) // every return false
+  // every([1, 2, 2]), (elt) => (return elt === 2) // every return false 
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (iterator === undefined) {
+      var areNone = _.every(collection, function(elt) {
+      return !elt; 
+      })
+    } else {
+      var areNone = _.every(collection, function(elt) {
+        return !iterator(elt); 
+      })
+    }
+    return areNone ? false : true;
   };
 
 
@@ -244,9 +271,9 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) { 
-    for(var props = 0; props < arguments.length; props++) {
-      for(var key in arguments[props]) {
-        obj[key] = arguments[props][key]
+    for (var props = 0; props < arguments.length; props++) {
+      for (var key in arguments[props]) {
+        obj[key] = arguments[props][key];
       }
     }
     return obj;
@@ -255,9 +282,9 @@
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-    for(var props = 0; props < arguments.length; props++) {
-      for(var key in arguments[props]) {
-        if(obj[key] === undefined) {
+    for (var props = 0; props < arguments.length; props++) {
+      for (var key in arguments[props]) {
+        if (obj[key] === undefined) {
           obj[key] = arguments[props][key];
         }
       }
@@ -306,6 +333,20 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var obj = {};
+    
+    return function() {
+      var key = JSON.stringify(arguments);
+      //if object does not have a property corresponding to key
+      if (obj[key] === undefined) {
+        var returnValue = func.apply(null, arguments);
+        obj[key] = returnValue;
+        return returnValue;
+      } else {
+        // return object[key] //
+        return obj[key]; 
+      }
+    }    
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -315,9 +356,17 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    
+    var loopArray = [];
+    for (var i = 2; i < arguments.length; i++) {
+    // iterate over arguments starting at index 2
+      // push the elt into loopArray
+      loopArray.push(arguments[i]);
+    };
+    setTimeout(function() {
+      func.apply(null, loopArray);
+    }, wait);
   };
-
-
   /**
    * ADVANCED COLLECTION OPERATIONS
    * ==============================
@@ -329,6 +378,10 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arrayCopy = [].concat(array);
+    return arrayCopy.sort(function(){
+      return Math.random();
+    })
   };
 
 
