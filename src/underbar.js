@@ -86,10 +86,8 @@
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
     var filter = [];
-    //use _.each to iterator over coll, passing in followings function:
     _.each(collection, function (element) {
-      //if invoking test w/ current element === true;
-      if(test(element)) {
+      if (test(element)) {
         filter.push(element);
       }
     });
@@ -97,9 +95,6 @@
   };
 
   // Return all elements of an array that don't pass a truth test.
-    //[1, 2, 3, 4]; 
-      //filter even => [2, 4]; 
-    //reject even => [1, 3];  
   _.reject = function(collection, test) {
     return _.filter(collection, function(element) {
       if (!test(element)) {
@@ -110,14 +105,11 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
-    var uniqueValues = [];//[1, 2];
-    //if isSorted => iterate through array
+    var uniqueValues = [];
     if(isSorted) {  
       var booleanReturn = [];
       for(var i = 0; i < array.length; i++) {
-        //var return = invoke iterator with current element 
-        var returns = iterator(array[i]);
-        //if booleanReturn does not cotain the variable return; 
+        var returns = iterator(array[i]); 
         if(!booleanReturn.includes(returns)) {
           booleanReturn.push(returns);  
           uniqueValues.push(array[i]); 
@@ -135,9 +127,15 @@
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
+    var outputs = [];
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    _.each(collection, function(elt, index, collection) {
+        var result = iterator(elt, index, collection);
+        outputs.push(result)
+      })
+    return outputs;
   };
 
   /*
