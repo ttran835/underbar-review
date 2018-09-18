@@ -106,18 +106,18 @@
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
     var uniqueValues = [];
-    if(isSorted) {  
+    if (isSorted) {  
       var booleanReturn = [];
-      for(var i = 0; i < array.length; i++) {
+      for (var i = 0; i < array.length; i++) {
         var returns = iterator(array[i]); 
-        if(!booleanReturn.includes(returns)) {
+        if (!booleanReturn.includes(returns)) {
           booleanReturn.push(returns);  
           uniqueValues.push(array[i]); 
         }
       }
     } else {
-      for(var i = 0; i < array.length; i++) {
-        if(!uniqueValues.includes(array[i])) {
+      for (var i = 0; i < array.length; i++) {
+        if (!uniqueValues.includes(array[i])) {
           uniqueValues.push(array[i]);
         }
       }
@@ -132,9 +132,10 @@
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
     _.each(collection, function(elt, index, collection) {
-        var result = iterator(elt, index, collection);
-        outputs.push(result)
-      })
+      var result = iterator(elt, index, collection);
+      outputs.push(result);
+    });
+
     return outputs;
   };
 
@@ -177,6 +178,16 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    //special case: if no accumulator
+    if (accumulator === undefined) {
+      accumulator = collection[0];
+      collection = collection.slice(1);
+    }
+    for (var i = 0; i < collection.length; i++) {
+      accumulator = iterator(accumulator, collection[i]);
+    } 
+      // accumulator = invokation of iterator on accumulator & collection[i]; 
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -194,7 +205,17 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(allTrue, elt) {
+      if (iterator === undefined) {
+        return elt;
+      }
+
+      if (!allTrue) {
+        return false;
+      }
+
+      return !!iterator(elt); 
+    }, true)
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -222,12 +243,26 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
+  _.extend = function(obj) { 
+    for(var props = 0; props < arguments.length; props++) {
+      for(var key in arguments[props]) {
+        obj[key] = arguments[props][key]
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for(var props = 0; props < arguments.length; props++) {
+      for(var key in arguments[props]) {
+        if(obj[key] === undefined) {
+          obj[key] = arguments[props][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
